@@ -11,7 +11,7 @@ export const fetchWeatherData: (
     params: {
       latitude: lat,
       longitude: lng,
-      current_weather: "temperature_2m,humidity_2m,uv_index,wind_speed_10m",
+      current: "temperature_2m,relative_humidity_2m,wind_speed_10m",
       timezone: "auto",
     },
   });

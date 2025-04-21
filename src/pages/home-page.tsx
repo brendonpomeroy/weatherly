@@ -40,7 +40,7 @@ export function HomePage() {
           <ul>
             {searchResults.map((city, index) => (
               <li key={`${city.name}-${index}`}>
-                <a href={`/city/${city.name}`}>
+                <a href={`/city/${city.name}?state=${city.state}`}>
                   {city.name}, {city.postcode}, {city.state}, {city.population}
                 </a>
               </li>
