@@ -4,5 +4,6 @@ export interface City {
   lng: number;
   state: string;
   stateName: string;
+  postcode: number;
   population: number;
 }

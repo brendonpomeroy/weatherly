@@ -35,6 +35,7 @@ describe("fetchCities", () => {
       lat: -36.09041,
       lng: 146.93912,
       state: "NSW",
+      postcode: 2640,
       stateName: "New South Wales",
       population: 6098,
     };

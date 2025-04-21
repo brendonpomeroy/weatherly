@@ -41,6 +41,7 @@ export const convertToCity = (data: CityDataModel): City => {
     lat: data.lat,
     lng: data.lng,
     state: data.state,
+    postcode: data.postcode,
     stateName: data.state_name,
     population: data.population,
   };
