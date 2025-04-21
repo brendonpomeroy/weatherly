@@ -4,15 +4,23 @@ import { mapToWeather } from "../api/mappers/weather-mapper";
 describe("Convert API response to WeatherData", () => {
   it("should convert the API response to WeatherData", () => {
     const apiResponse = {
-      current_weather: {
-        temperature: 25,
-        humidity: 60,
+      current_units: {
+        temperature_2m: "C",
+        wind_speed_10m: "km/h",
+      },
+      current: {
+        time: "2025-04-19T12:00",
+        temperature_2m: 25,
+        relative_humidity_2m: 60,
         uv_index: 5,
-        wind_speed: 10,
+        wind_speed_10m: 10,
       },
     };
 
     const expectedWeatherData = {
+      speedUnits: "km/h",
+      temperatureUnits: "C",
+      time: "2025-04-19T12:00",
       temperature: 25,
       humidity: 60,
       uvIndex: 5,

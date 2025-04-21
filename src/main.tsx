@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { Router } from "./routes";
@@ -7,11 +6,9 @@ import "leaflet/dist/leaflet.css";
 import { WeatherProvider } from "./components/services/weather/weather-provider";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <CitiesProvider>
-      <WeatherProvider>
-        <Router />
-      </WeatherProvider>
-    </CitiesProvider>
-  </StrictMode>,
+  <CitiesProvider>
+    <WeatherProvider>
+      <Router />
+    </WeatherProvider>
+  </CitiesProvider>,
 );

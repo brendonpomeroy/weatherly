@@ -10,8 +10,7 @@ export function WeatherProvider({ children }: PropsWithChildren) {
     humidity: true,
     windSpeed: true,
     uvIndex: true,
-    temperatureUnits: "f",
-    windSpeedUnits: "m/s",
+    metric: true,
   });
 
   const setWeatherParams: (params: WeatherParams) => void = (params) => {
@@ -22,7 +21,7 @@ export function WeatherProvider({ children }: PropsWithChildren) {
     lat,
     lng,
   ) => {
-    const weather = await fetchWeatherData(lat, lng);
+    const weather = await fetchWeatherData(lat, lng, params);
     return weather;
   };
 

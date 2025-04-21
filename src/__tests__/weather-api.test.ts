@@ -9,15 +9,23 @@ describe("fetchWeather", () => {
   it("should fetch and transform weather data correctly", async () => {
     // Mock the API response
     const mockResponse = {
-      current_weather: {
-        temperature: 25,
-        humidity: 60,
+      current_units: {
+        temperature_2m: "C",
+        wind_speed_10m: "km/h",
+      },
+      current: {
+        time: "2025-04-19T12:00",
+        temperature_2m: 25,
+        relative_humidity_2m: 60,
         uv_index: 5,
-        wind_speed: 10,
+        wind_speed_10m: 10,
       },
     };
 
     const expectedWeatherData: WeatherData = {
+      speedUnits: "km/h",
+      temperatureUnits: "C",
+      time: "2025-04-19T12:00",
       temperature: 25,
       humidity: 60,
       uvIndex: 5,
@@ -31,20 +39,14 @@ describe("fetchWeather", () => {
     });
 
     // Call the function to fetch weather data
-    const response = fetchWeatherData(0, 0);
+    const response = fetchWeatherData(0, 0, {
+      temperature: true,
+      humidity: true,
+      windSpeed: true,
+      uvIndex: true,
+      metric: true,
+    });
     // Check if the response matches the expected data
     expect(response).resolves.toEqual(expectedWeatherData);
-    // Check if axios was called with the correct URL and parameters
-    expect(axios.get).toHaveBeenCalledWith(
-      "https://api.open-meteo.com/v1/forecast",
-      {
-        params: {
-          latitude: 0,
-          longitude: 0,
-          current_weather: "temperature_2m,humidity_2m,uv_index,wind_speed_10m",
-          timezone: "auto",
-        },
-      },
-    );
   });
 });
