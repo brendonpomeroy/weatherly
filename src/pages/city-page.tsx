@@ -70,7 +70,7 @@ export function CityPage() {
   }, [loadingCity, loadingWeather]);
 
   return (
-    <div className="h-full max-w-2xl mx-auto flex flex-col justify-center gap-4">
+    <div className="h-full max-w-2xl mx-auto flex flex-col justify-center gap-4 mt-4">
       <SettingsMenu />
       <div
         className="cursor-pointer flex flex-row gap-2"
