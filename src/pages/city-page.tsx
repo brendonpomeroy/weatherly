@@ -14,6 +14,7 @@ import {
   WindSpeedIcon,
 } from "../components/ui/icons";
 import { ChevronLeftIcon } from "lucide-react";
+import { Skeleton } from "../components/ui/skeleton";
 
 export function CityPage() {
   const navigate = useNavigate();
@@ -23,10 +24,13 @@ export function CityPage() {
   // search param is to disambiguate cities with the same name
   const state = new URLSearchParams(window.location.search).get("state");
   const [matchedCity, setMatchedCity] = useState<City | null>(null);
+  const [loadingCity, setLoadingCity] = useState(true);
+  const [loadingWeather, setLoadingWeather] = useState(true);
   const [loading, setLoading] = useState(true);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
 
   useEffect(() => {
+    setLoadingCity(true);
     const matches = citiesContext.cities
       .sort((a, b) => {
         return b.population - a.population;
@@ -47,17 +51,23 @@ export function CityPage() {
     } else {
       setMatchedCity(null);
     }
-    setLoading(false);
+    setLoadingCity(false);
   }, [citiesContext.cities, cityName, state]);
 
   useEffect(() => {
     if (matchedCity !== null) {
+      setLoadingWeather(true);
       // fetch the weather data
       weather.getWeather(matchedCity.lat, matchedCity.lng).then((data) => {
         setWeatherData(data);
+        setLoadingWeather(false);
       });
     }
   }, [matchedCity, weather, weather.params]);
+
+  useEffect(() => {
+    setLoading(loadingCity || loadingWeather);
+  }, [loadingCity, loadingWeather]);
 
   return (
     <div className="h-full max-w-2xl mx-auto flex flex-col justify-center gap-4">
@@ -81,50 +91,47 @@ export function CityPage() {
             )}
         </p>
       </div>
-      {loading && <p>Loading...</p>}
-      {weatherData && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-2 col-auto justify-center">
-          {weather.params.temperature && (
-            <WeatherParam
-              value={weatherData.temperature}
-              unit={weatherData.temperatureUnits}
-              label="Temperature"
-              loading={loading}
-            >
-              <TemperatureIcon />
-            </WeatherParam>
-          )}
-          {weather.params.temperature && (
-            <WeatherParam
-              value={weatherData.humidity}
-              unit="%"
-              label="Humidity"
-              loading={loading}
-            >
-              <HumidityIcon />
-            </WeatherParam>
-          )}
-          {weather.params.temperature && (
-            <WeatherParam
-              value={weatherData.uvIndex}
-              label="UV Index"
-              loading={loading}
-            >
-              <UvIndexIcon />
-            </WeatherParam>
-          )}
-          {weather.params.temperature && (
-            <WeatherParam
-              value={weatherData.windSpeed}
-              unit={weatherData.speedUnits}
-              label="Wind Speed"
-              loading={loading}
-            >
-              <WindSpeedIcon />
-            </WeatherParam>
-          )}
-        </div>
-      )}
+      <div className="flex flex-row flex-wrap gap-2 py-2 justify-center">
+        {weather.params.temperature && (
+          <WeatherParam
+            value={weatherData?.temperature}
+            unit={weatherData?.temperatureUnits}
+            label="Temperature"
+            loading={loading}
+          >
+            <TemperatureIcon />
+          </WeatherParam>
+        )}
+        {weather.params.humidity && (
+          <WeatherParam
+            value={weatherData?.humidity}
+            unit="%"
+            label="Humidity"
+            loading={loading}
+          >
+            <HumidityIcon />
+          </WeatherParam>
+        )}
+        {weather.params.uvIndex && (
+          <WeatherParam
+            value={weatherData?.uvIndex}
+            label="UV Index"
+            loading={loading}
+          >
+            <UvIndexIcon />
+          </WeatherParam>
+        )}
+        {weather.params.windSpeed && (
+          <WeatherParam
+            value={weatherData?.windSpeed}
+            unit={weatherData?.speedUnits}
+            label="Wind Speed"
+            loading={loading}
+          >
+            <WindSpeedIcon />
+          </WeatherParam>
+        )}
+      </div>
       {matchedCity && (
         <div className="h-100 rounded-lg overflow-hidden shadow-lg m-4">
           <PinMap lng={matchedCity.lng} lat={matchedCity.lat} zoom={13} />
@@ -142,16 +149,17 @@ const WeatherParam: (
     loading: boolean;
   }>,
 ) => ReactNode = (props) => {
-  if (!props.value) {
-    return null;
-  }
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div className="flex flex-col items-center justify-center w-[120px]">
       <div className="py-2">{props.children}</div>
-      <p className="font-semibold">
-        {props.value}
-        {props.unit}
-      </p>
+      {props.loading ? (
+        <Skeleton className="h-[18px] w-[50px] my-1" />
+      ) : (
+        <p className="font-semibold text-lg">
+          {props.value}
+          {props.unit}
+        </p>
+      )}
       <p className="text-xs text-gray-500">{props.label}</p>
     </div>
   );
