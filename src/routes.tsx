@@ -9,7 +9,7 @@ const router = createBrowserRouter([
     Component: HomePage,
   },
   {
-    path: "/city/:city",
+    path: "/weather/:city",
     Component: CityPage,
   },
 ]);

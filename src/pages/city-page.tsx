@@ -1,11 +1,19 @@
 import { useNavigate, useParams } from "react-router";
 import { useCities } from "../components/services/cities/cities-hook";
-import { ReactNode, useEffect, useState } from "react";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
 import { City } from "../models/city";
 import { PinMap } from "../components/ui/pin-map";
 import { WeatherData } from "../models/weather";
 import { useWeather } from "../components/services/weather/weather-hook";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
+import { SettingsMenu } from "../components/compositions/settings-menu";
+import {
+  HumidityIcon,
+  TemperatureIcon,
+  UvIndexIcon,
+  WindSpeedIcon,
+} from "../components/ui/icons";
+import { ChevronLeftIcon } from "lucide-react";
 
 export function CityPage() {
   const navigate = useNavigate();
@@ -52,26 +60,73 @@ export function CityPage() {
   }, [matchedCity, weather, weather.params]);
 
   return (
-    <div>
-      <h1>City</h1>
-      <button onClick={() => navigate("/")}>Search</button>
-      <p>
-        Welcome to the {matchedCity?.name}, {matchedCity?.state} page!
-      </p>
+    <div className="h-full max-w-2xl mx-auto flex flex-col justify-center gap-4">
+      <SettingsMenu />
+      <div
+        className="cursor-pointer flex flex-row gap-2"
+        onClick={() => navigate("/")}
+      >
+        <ChevronLeftIcon />
+        Back to Search
+      </div>
+      <div className="text-center py-4">
+        <p className="text-2xl font-bold">{matchedCity?.name}</p>
+        <p>{matchedCity?.stateName}</p>
+        <p>
+          {weatherData &&
+            formatInTimeZone(
+              new Date(),
+              weatherData.timezone,
+              "hh:mma d MMMM yyyy",
+            )}
+        </p>
+      </div>
       {loading && <p>Loading...</p>}
-      <ParamSelector />
-      <UnitsSelect />
       {weatherData && (
-        <>
-          <p>Time: {format(weatherData.time, "hh:mmb d MMMM yyyy")}</p>
-          <p>Temperature: {weatherData.temperature}{weatherData.temperatureUnits}</p>
-          <p>Humidity: {weatherData.humidity}</p>
-          <p>UV Index: {weatherData.uvIndex}</p>
-          <p>Wind Speed: {weatherData.windSpeed}{weatherData.speedUnits}</p>
-        </>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-2 col-auto justify-center">
+          {weather.params.temperature && (
+            <WeatherParam
+              value={weatherData.temperature}
+              unit={weatherData.temperatureUnits}
+              label="Temperature"
+              loading={loading}
+            >
+              <TemperatureIcon />
+            </WeatherParam>
+          )}
+          {weather.params.temperature && (
+            <WeatherParam
+              value={weatherData.humidity}
+              unit="%"
+              label="Humidity"
+              loading={loading}
+            >
+              <HumidityIcon />
+            </WeatherParam>
+          )}
+          {weather.params.temperature && (
+            <WeatherParam
+              value={weatherData.uvIndex}
+              label="UV Index"
+              loading={loading}
+            >
+              <UvIndexIcon />
+            </WeatherParam>
+          )}
+          {weather.params.temperature && (
+            <WeatherParam
+              value={weatherData.windSpeed}
+              unit={weatherData.speedUnits}
+              label="Wind Speed"
+              loading={loading}
+            >
+              <WindSpeedIcon />
+            </WeatherParam>
+          )}
+        </div>
       )}
       {matchedCity && (
-        <div className="h-100 w-full">
+        <div className="h-100 rounded-lg overflow-hidden shadow-lg m-4">
           <PinMap lng={matchedCity.lng} lat={matchedCity.lat} zoom={13} />
         </div>
       )}
@@ -79,67 +134,25 @@ export function CityPage() {
   );
 }
 
-const ParamSelector: () => ReactNode = () => {
-  const weather = useWeather();
-  const params = weather.params;
-
-  const setWeatherParams = weather.setWeatherParams;
-
+const WeatherParam: (
+  props: PropsWithChildren<{
+    value?: string | number;
+    unit?: string;
+    label: string;
+    loading: boolean;
+  }>,
+) => ReactNode = (props) => {
+  if (!props.value) {
+    return null;
+  }
   return (
-    <div className="flex flex-row gap-2">
-      <ParamSelect
-        label="Temperature"
-        active={params.temperature}
-        onClick={() => {
-          setWeatherParams({ ...params, temperature: !params.temperature });
-        }}
-      />
-      <ParamSelect
-        label="Humidity"
-        active={params.humidity}
-        onClick={() => {
-          setWeatherParams({ ...params, humidity: !params.humidity });
-        }}
-      />
-      <ParamSelect
-        label="Wind Speed"
-        active={params.windSpeed}
-        onClick={() => {
-          setWeatherParams({ ...params, windSpeed: !params.windSpeed });
-        }}
-      />
-      <ParamSelect
-        label="UV Index"
-        active={params.uvIndex}
-        onClick={() => {
-          setWeatherParams({ ...params, uvIndex: !params.uvIndex });
-        }}
-      />
-    </div>
-  );
-};
-
-const ParamSelect: (props: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) => ReactNode = (props) => {
-  return (
-    <div
-      data-active={props.active}
-      onClick={props.onClick}
-      className="cursor-pointer bg-gray-200 p-2 rounded-md data-[active=true]:bg-blue-500 data-[active=true]:text-white"
-    >
-      <p>{props.label}</p>
-    </div>
-  );
-};
-
-const UnitsSelect: () => ReactNode = () => {
-  const weather = useWeather();
-  return (
-    <div className="flex flex-row gap-2" onClick={() => weather.setWeatherParams({ ...weather.params, metric: !weather.params.metric })}>
-      {weather.params.metric ? "metric" : "imperial"}
+    <div className="flex flex-col items-center justify-center w-full">
+      <div className="py-2">{props.children}</div>
+      <p className="font-semibold">
+        {props.value}
+        {props.unit}
+      </p>
+      <p className="text-xs text-gray-500">{props.label}</p>
     </div>
   );
 };

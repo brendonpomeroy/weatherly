@@ -1,6 +1,9 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useCities } from "../components/services/cities/cities-hook";
 import { City } from "../models/city";
+import { SearchField } from "../components/compositions/search-field";
+import { useNavigate } from "react-router";
+import { CloudSunRain } from "lucide-react";
 
 export function HomePage() {
   const citiesContext = useCities();
@@ -8,6 +11,21 @@ export function HomePage() {
   const [searchResults, setSearchResults] = useState<City[]>([]);
 
   useEffect(() => {
+    const sortCities = (a: City, b: City) => {
+      const aName = a.name.toLowerCase();
+      const bName = b.name.toLowerCase();
+      const search = searchTerm.toLowerCase();
+      // Exact match
+      if (aName === search) return -1;
+      // Starts with search term
+      if (aName.startsWith(search) && !bName.startsWith(search)) return -1;
+      // Includes search term
+      if (aName.includes(search) && !bName.includes(search)) return -1;
+      // Fuzzy match
+      if (aName < bName) return -1;
+      return 0;
+    };
+
     // Speed optimisation as no cities have names
     // that are less than 2 characters
     if (searchTerm.length < 2) {
@@ -19,63 +37,57 @@ export function HomePage() {
       city.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
-    setSearchResults(results);
+    setSearchResults(results.sort(sortCities));
   }, [citiesContext.cities, searchTerm]);
 
   return (
-    <div>
-      <h1>Home</h1>
-      <p>
-        Welcome to the home page! {citiesContext.cities.length} Cities loaded
-      </p>
-      <div>
-        <TextField
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="City"
-        />
-      </div>
-      <div>
-        {searchResults.length > 0 ? (
-          <ul>
-            {searchResults.map((city, index) => (
-              <li key={`${city.name}-${index}`}>
-                <a href={`/city/${city.name}?state=${city.state}`}>
-                  {city.name}, {city.postcode}, {city.state}, {city.population}
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No cities found</p>
-        )}
+    <div className="h-full max-w-2xl mx-auto flex flex-col">
+      <div className="h-1/4"></div>
+      <div className="w-full px-4 py-8 transition duration-500 ease-in-out">
+        <div className="flex flex-col items-center py-4 gap-4">
+          <CloudSunRain size={120} color={"#FFC067"} />
+          <h1>Weather Explorer</h1>
+          <p>
+            Find your weather, search for your city and get the latest weather
+            update.
+          </p>
+        </div>
+        <div>
+          <SearchField value={searchTerm} onChange={setSearchTerm} />
+        </div>
+        {searchTerm.length > 2 && <SearchResults results={searchResults} />}
       </div>
     </div>
   );
 }
 
-export interface TextFieldProps {
-  placeholder?: string;
-  value: string;
-  onEnter?: () => void;
-  onChange: (value: string) => void;
-}
-
-const TextField: (props: TextFieldProps) => ReactNode = (props) => {
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && props.onEnter) {
-      props.onEnter();
-    }
-  };
+const SearchResults: ({ results }: { results: City[] }) => ReactNode = ({
+  results,
+}) => {
+  const navigate = useNavigate();
 
   return (
-    <input
-      type="text"
-      placeholder={props.placeholder}
-      value={props.value}
-      onChange={(e) => props.onChange(e.target.value)}
-      onKeyDown={handleKeyDown}
-      className="mt-0.5 w-full rounded border-gray-300 shadow-sm sm:text-sm"
-    />
+    <div className="bg-white py-2 px-3 mt-2 rounded-xl shadow-md max-h-96 overflow-y-auto">
+      {results.length > 0 ? (
+        <ul>
+          {results.map((city, index) => (
+            <li
+              key={`${city.name}-${index}`}
+              className="py-2 px-2 hover:bg-gray-100 rounded cursor-pointer"
+              onClick={() =>
+                navigate(`/weather/${city.name}?state=${city.state}`)
+              }
+            >
+              <span className="font-semibold">{city.name}</span>
+              <span className="text-gray-600">
+                , {city.postcode}, {city.state}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No cities found</p>
+      )}
+    </div>
   );
 };

@@ -9,6 +9,7 @@ describe("fetchWeather", () => {
   it("should fetch and transform weather data correctly", async () => {
     // Mock the API response
     const mockResponse = {
+      timezone: "Australia/Adelaide",
       current_units: {
         temperature_2m: "C",
         wind_speed_10m: "km/h",
@@ -26,6 +27,7 @@ describe("fetchWeather", () => {
       speedUnits: "km/h",
       temperatureUnits: "C",
       time: "2025-04-19T12:00",
+      timezone: "Australia/Adelaide",
       temperature: 25,
       humidity: 60,
       uvIndex: 5,

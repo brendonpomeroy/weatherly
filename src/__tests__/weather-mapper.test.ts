@@ -4,6 +4,7 @@ import { mapToWeather } from "../api/mappers/weather-mapper";
 describe("Convert API response to WeatherData", () => {
   it("should convert the API response to WeatherData", () => {
     const apiResponse = {
+      timezone: "Australia/Adelaide",
       current_units: {
         temperature_2m: "C",
         wind_speed_10m: "km/h",
@@ -21,6 +22,7 @@ describe("Convert API response to WeatherData", () => {
       speedUnits: "km/h",
       temperatureUnits: "C",
       time: "2025-04-19T12:00",
+      timezone: "Australia/Adelaide",
       temperature: 25,
       humidity: 60,
       uvIndex: 5,

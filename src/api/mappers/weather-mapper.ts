@@ -1,6 +1,7 @@
 import { WeatherData } from "../../models/weather";
 
 interface WeatherDataModel {
+  timezone: string;
   current_units: {
     temperature_2m: string;
     wind_speed_10m: string;
@@ -21,6 +22,7 @@ export const mapToWeather: (data: unknown) => WeatherData = (data) => {
     speedUnits: parsed.current_units.wind_speed_10m,
     temperatureUnits: parsed.current_units.temperature_2m,
     time: parsed.current.time,
+    timezone: parsed.timezone,
     temperature: parsed.current.temperature_2m,
     humidity: parsed.current.relative_humidity_2m,
     uvIndex: parsed.current.uv_index,
