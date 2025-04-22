@@ -1,8 +1,8 @@
 import { LatLngExpression } from "leaflet";
 import { ReactNode } from "react";
-import L from 'leaflet';
+import L from "leaflet";
 import { MapContainer, TileLayer, Popup, Marker } from "react-leaflet";
-import markerIconUrl from '@/assets/map-pin.svg';
+import markerIconUrl from "@/assets/map-pin.svg";
 
 export interface PinMapProps {
   lng: number;
@@ -39,6 +39,6 @@ const markerIcon = new L.Icon({
   shadowUrl: undefined,
   shadowSize: undefined,
   shadowAnchor: undefined,
-  iconSize: [24,45],
-  className: '',
+  iconSize: [24, 45],
+  className: "",
 });
