@@ -37,7 +37,7 @@ export const SettingsMenu: () => ReactNode = () => {
   return (
     <div
       ref={menuRef}
-      className="fixed bottom-4 right-4 flex flex-col items-end justify-center gap-2"
+      className="absolute bottom-4 right-4 flex flex-col items-end justify-center gap-2 z-10000"
     >
       <div
         data-open={showMenu}

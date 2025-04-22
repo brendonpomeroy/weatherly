@@ -1,6 +1,8 @@
 import { LatLngExpression } from "leaflet";
 import { ReactNode } from "react";
+import L from 'leaflet';
 import { MapContainer, TileLayer, Popup, Marker } from "react-leaflet";
+import markerIconUrl from '@/assets/map-pin.svg';
 
 export interface PinMapProps {
   lng: number;
@@ -22,9 +24,21 @@ export const PinMap: (props: PinMapProps) => ReactNode = (props) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={position}>
+      <Marker position={position} icon={markerIcon}>
         {props.markerContent && <Popup>{props.markerContent}</Popup>}
       </Marker>
     </MapContainer>
   );
 };
+
+const markerIcon = new L.Icon({
+  iconUrl: markerIconUrl,
+  iconRetinaUrl: markerIconUrl,
+  iconAnchor: undefined,
+  popupAnchor: undefined,
+  shadowUrl: undefined,
+  shadowSize: undefined,
+  shadowAnchor: undefined,
+  iconSize: [24,45],
+  className: '',
+});
