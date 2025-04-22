@@ -1,4 +1,4 @@
-import { RulerDimensionLine, SettingsIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 import {
   PropsWithChildren,
   ReactNode,
@@ -13,6 +13,7 @@ import {
   UvIndexIcon,
   WindSpeedIcon,
 } from "../ui/icons";
+import { cn } from "@/utils";
 
 export const SettingsMenu: () => ReactNode = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -115,7 +116,7 @@ const ParamSelect: (
     <div
       data-active={props.active}
       onClick={props.onClick}
-      className="cursor-pointer bg-gray-200 p-2 rounded-md data-[active=true]:bg-[#6686cc] data-[active=true]:text-white flex flex-row gap-2 items-center justify-start"
+      className="cursor-pointer bg-gray-200 py-2 px-3 rounded-md data-[active=true]:bg-[#6686cc] data-[active=true]:text-white flex flex-row gap-2 items-center justify-start"
     >
       <div className="h-4 w-4 [&>*]:w-full [&>*]:h-full">{props.children}</div>
       <p className="text-sm">{props.label}</p>
@@ -133,15 +134,26 @@ const UnitsSelect: () => ReactNode = () => {
     });
   };
 
+  const isMetric = weather.params.metric;
+
   return (
-    <div
-      className="cursor-pointer bg-gray-200 p-2 rounded-md flex flex-row gap-2 items-center justify-start mt-2"
-      onClick={toggleUnits}
-    >
-      <div className="h-4 w-4 [&>*]:w-full [&>*]:h-full">
-        <RulerDimensionLine />
-      </div>
-      <p className="text-sm">{weather.params.metric ? "Metric" : "Imperial"}</p>
+    <div className="flex items-center justify-center gap-2 text-sm font-medium bg-gray-200 py-2 px-3 rounded-md mt-2">
+      <span className="text-muted-foreground flex-1">Metric</span>
+      <button
+        onClick={() => toggleUnits()}
+        className={cn(
+          "relative w-12 h-6 bg-pastel-blue rounded-full transition-colors duration-300 flex-2",
+          isMetric ? "bg-blue-300" : "bg-[#FAC898]",
+        )}
+        aria-label="Toggle units"
+      >
+        <div
+          className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-transform duration-300 ${
+            isMetric ? "translate-x-0" : "translate-x-6"
+          }`}
+        />
+      </button>
+      <span className="text-muted-foreground flex-1">Imperial</span>
     </div>
   );
 };

@@ -47,7 +47,7 @@ export function HomePage() {
         <div className="flex flex-col items-center py-4 gap-4">
           <CloudSunRain size={120} color={"#FFC067"} />
           <p className="text-2xl font-bold">Weather Explorer</p>
-          <p>
+          <p className="text-center">
             Find your weather, search for your city and get the latest weather
             update.
           </p>
